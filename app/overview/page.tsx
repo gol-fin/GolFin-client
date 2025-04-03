@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 
-export default function Home() {
+export default function Overview() {
   return (
     <div className="min-h-full">
       <Header activeTab='Tổng quan' />
