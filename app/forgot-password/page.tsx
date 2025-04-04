@@ -76,8 +76,8 @@ export default function ForgotPasswordPage() {
             return;
         }
         if (newPassword.length < 8) { // Example validation
-             setError('Mật khẩu phải có ít nhất 8 ký tự.');
-             return;
+            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            return;
         }
 
         setIsLoading(true);
@@ -172,7 +172,7 @@ export default function ForgotPasswordPage() {
                                     />
                                 </div>
                             </div>
-                             <div>
+                            <div>
                                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                                     Xác nhận mật khẩu mới
                                 </label>
@@ -202,19 +202,19 @@ export default function ForgotPasswordPage() {
                         </form>
                     </>
                 );
-             case 'success':
+            case 'success':
                 return (
                     <div className="text-center">
-                         <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-gray-900">
+                        <h2 className="mb-4 text-center text-2xl font-bold tracking-tight text-gray-900">
                             Thành công!
                         </h2>
                         <p className="mb-6 text-sm text-gray-600">
-                           Mật khẩu của bạn đã được đặt lại thành công.
+                            Mật khẩu của bạn đã được đặt lại thành công.
                         </p>
-                         <Link href="/login" // Link back to your login page
-                             className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                                Quay lại Đăng nhập
-                         </Link>
+                        <Link href="/login" // Link back to your login page
+                            className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            Quay lại Đăng nhập
+                        </Link>
                     </div>
                 );
 
@@ -247,7 +247,7 @@ export default function ForgotPasswordPage() {
                                     />
                                 </div>
                             </div>
-                             {error && <p className="text-sm text-red-600">{error}</p>}
+                            {error && <p className="text-sm text-red-600">{error}</p>}
                             <div>
                                 <Button
                                     type="submit"
@@ -257,7 +257,7 @@ export default function ForgotPasswordPage() {
                                     {isLoading ? 'Đang gửi...' : 'Gửi mã OTP'}
                                 </Button>
                             </div>
-                              <div className="text-center text-sm">
+                            <div className="text-center text-sm">
                                 <Link href="/login" // Link back to your login page
                                     className="font-medium text-gray-500 hover:text-gray-700">
                                     Quay lại đăng nhập

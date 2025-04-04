@@ -1,8 +1,6 @@
 import Header from '@/components/Header';
 import TransactionForm from '@/components/TransactionForm';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FiPlusCircle, FiMeh } from 'react-icons/fi';
+import { FiMeh } from 'react-icons/fi';
 
 export default function TransactionsPage() {
     const summaryData = [
