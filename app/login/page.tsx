@@ -2,8 +2,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
+import Login from './action';
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
+const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8, { message: "Password must be atleast 8 characters" }).max(20, { message: "Password must be lower than 20 characters" })
+        .refine((password) => /[A-Z]/.test(password), {
+            message: "Password must have atleast 1 Uppercase",
+        })
+        .refine((password) => /[a-z]/.test(password), {
+            message: "Password must have atleast 1 Lowercase",
+        })
+})
 
 export default function LoginPage() {
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
+        }
+    })
+
     return (
         <div className="flex min-h-screen flex-col bg-gray-100">
             <header className="bg-gray-200 py-3 shadow-sm mt-20">
@@ -34,7 +57,7 @@ export default function LoginPage() {
                             </Link>
                         </p>
 
-                        <form className="space-y-6" action="#" method="POST">
+                        <form className="space-y-6" action={Login} method="POST">
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                                     Địa chỉ e-mail

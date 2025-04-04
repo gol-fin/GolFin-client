@@ -15,6 +15,9 @@ export default function TransactionForm() {
     const [catalogTitle, setCatalogTitle] = React.useState<string>("Hãy chọn danh mục!")
     const [activeType, setActiveType] = React.useState<'expense' | 'income'>('expense');
     const [selectedCategoryId, setSelectedCategoryId] = React.useState<string | null>(null);
+    const [amount, setAmount] = React.useState<number>(0)
+    const [note, setNote] = React.useState<string>("")
+    const [isRepeated, setIsRepeated] = React.useState<boolean>(false)
     const expenseCategories = [
         { id: 'exp-1', name: 'Ăn uống' },
         { id: 'exp-2', name: 'Mua sắm' },
@@ -38,6 +41,9 @@ export default function TransactionForm() {
         setCatalogTitle(category.name);
     };
 
+    console.log(date != undefined)
+    console.log(selectedCategoryId != null)
+    console.log(amount != 0)
     return (
         <>
             <Dialog>
@@ -158,8 +164,10 @@ export default function TransactionForm() {
                                 name="transaction-amount"
                                 id="transaction-amount"
                                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
-                                placeholder="0.00"
-                                step="0.01"
+                                placeholder="0"
+                                step="1"
+                                value={amount}
+                                onChange={(v) => { setAmount(parseInt(v.target.value)) }}
                             />
                         </div>
 
@@ -172,6 +180,8 @@ export default function TransactionForm() {
                                 name="transaction-notes"
                                 id="transaction-notes"
                                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
+                                value={note}
+                                onChange={(v) => { setNote(v.target.value) }}
                             />
                         </div>
 
@@ -183,6 +193,8 @@ export default function TransactionForm() {
                                         name="repeat-transaction"
                                         type="checkbox"
                                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        checked={isRepeated}
+                                        onChange={(v) => { setIsRepeated(!isRepeated) }}
                                     />
                                 </div>
                                 <div className="ml-2 text-sm">
@@ -194,7 +206,13 @@ export default function TransactionForm() {
 
                             <button
                                 type="submit"
-                                className="inline-flex justify-center rounded-md border border-transparent bg-gray-200 px-5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                                disabled={!(date != undefined && selectedCategoryId != null && amount != 0)}
+                                className={`inline-flex justify-center rounded-md border border-transparent
+                                            px-6 py-2 text-sm font-bold shadow-sm
+                                            text-white bg-gray-400 hover:bg-gray-600
+                                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                            disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed
+                                            transition-colors duration-150 ease-in-out`}
                             >
                                 Lưu
                             </button>
