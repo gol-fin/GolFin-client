@@ -41,9 +41,6 @@ export default function TransactionForm() {
         setCatalogTitle(category.name);
     };
 
-    console.log(date != undefined)
-    console.log(selectedCategoryId != null)
-    console.log(amount != 0)
     return (
         <>
             <Dialog>

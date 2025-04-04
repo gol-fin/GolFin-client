@@ -1,6 +1,8 @@
+"use client";
 import { Button } from './ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { FiBell, FiUser } from 'react-icons/fi';
 
 interface HeaderProps {
@@ -60,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab }) => {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>Profile</DropdownMenuItem>
                             <DropdownMenuItem>Setting</DropdownMenuItem>
-                            <DropdownMenuItem>Log Out</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { redirect("/logout") }}>Log Out</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
