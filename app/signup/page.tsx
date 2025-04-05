@@ -1,8 +1,38 @@
+"use client";
 import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import SignUp from './action';
+
+const passwordSchema = z.string().min(8, { message: "Mật khẩu phải ít nhất 8 kí tự." }).max(20, { message: "Mật khẩu không được quá 20 kí tự" })
+    .refine((password) => /[A-Z]/.test(password), {
+        message: "Mật khẩu phải có ít nhất 1 chữ in hoa",
+    })
+    .refine((password) => /[a-z]/.test(password), {
+        message: "Mật khẩu phải có ít nhất 1 chữ thường",
+    })
+
+const signUpSchema = z.object({
+    email: z.string().email(),
+    password: passwordSchema,
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "2 mật khẩu khác nhau"
+})
 
 export default function SignupPage() {
+    const form = useForm<z.infer<typeof signUpSchema>>({
+        resolver: zodResolver(signUpSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        }
+    })
     return (
         <div className="flex min-h-screen flex-col bg-gray-100">
 
@@ -32,89 +62,99 @@ export default function SignupPage() {
                                 Đăng nhập ở đây!
                             </Link>
                         </p>
+                        <Form {...form}>
+                            <form className="space-y-6" onSubmit={form.handleSubmit(SignUp)} method="POST">
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block text-sm font-medium text-gray-700">
+                                                Địa chỉ e-mail
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block text-sm font-medium text-gray-700">
+                                                Mật khẩu
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type='password'
+                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="block text-sm font-medium text-gray-700">
+                                                Xác nhận mật khẩu
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    type='password'
+                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <form className="space-y-6" action="#" method="POST">
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                    Địa chỉ e-mail
-                                </label>
-                                <div className="mt-1">
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        required
-                                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                    />
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        className="flex w-full justify-center rounded-md border border-transparent bg-gray-300 py-2 px-4 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                                    >
+                                        Đăng ký vào GolFin
+                                    </Button>
                                 </div>
-                            </div>
 
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    Mật khẩu
-                                </label>
-                                <div className="mt-1">
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        autoComplete="new-password"
-                                        required
-                                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                    />
+                                <div className="mt-6 space-y-3 pt-6 border-t border-gray-200">
+                                    <p className="text-center text-xs text-gray-500 mb-3">Hoặc đăng ký bằng</p>
+                                    <Button
+                                        type="button"
+                                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        Sign up with Facebook
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        Sign up with Google
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        Sign up with Apple
+                                    </Button>
                                 </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
-                                    Xác nhận mật khẩu
-                                </label>
-                                <div className="mt-1">
-                                    <Input
-                                        id="confirm-password"
-                                        name="confirm-password"
-                                        type="password"
-                                        autoComplete="new-password"
-                                        required
-                                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <Button
-                                    type="submit"
-                                    className="flex w-full justify-center rounded-md border border-transparent bg-gray-300 py-2 px-4 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                                >
-                                    Đăng ký vào GolFin
-                                </Button>
-                            </div>
-
-                            <div className="mt-6 space-y-3 pt-6 border-t border-gray-200">
-                                <p className="text-center text-xs text-gray-500 mb-3">Hoặc đăng ký bằng</p>
-                                <Button
-                                    type="button"
-                                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
-                                    Sign up with Facebook
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
-                                    Sign up with Google
-                                </Button>
-
-                                <Button
-                                    type="button"
-                                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
-                                    Sign up with Apple
-                                </Button>
-                            </div>
-                        </form>
+                            </form>
+                        </Form>
                     </div>
                 </div>
             </main>
