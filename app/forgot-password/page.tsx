@@ -111,6 +111,43 @@ export default function ForgotPasswordPage() {
     const handlePasswordResetSubmit = async (e: any) => {
         e.preventDefault();
         setError('');
+
+        // --- Validate new password and confirm password ---
+        // password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number
+        if (!newPassword || !confirmPassword) {
+            setError('Vui lòng nhập đầy đủ mật khẩu mới.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError('Mật khẩu xác nhận không khớp.');
+            return;
+        }
+        
+        if (newPassword.length < 8) { // Example validation
+            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            return;
+        }
+
+        if (!/[A-Z]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ cái viết hoa.');
+            return;
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ cái viết thường.');
+            return;
+        }
+        
+        if (!/[0-9]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ số.');
+            return;
+        }
+
+        if (!/[!@#$%^&*]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một ký tự đặc biệt.');
+            return;
+        }
+
         if (!newPassword || !confirmPassword) {
             setError('Vui lòng nhập đầy đủ mật khẩu mới.');
             return;
