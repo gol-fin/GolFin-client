@@ -15,7 +15,7 @@ export const config = {
 }
 
 export async function middleware(request: NextRequest) {
-    if (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup")) {
+    if (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup") || request.nextUrl.password.startsWith("/forgot-password")) {
         if (request.cookies.has("access") || request.cookies.has("refresh"))
             return NextResponse.redirect(new URL('/overview', request.url))
         return NextResponse.next()
