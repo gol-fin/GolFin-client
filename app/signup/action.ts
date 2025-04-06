@@ -19,7 +19,6 @@ const signUpSchema = z.object({
 })
 
 export default async function SignUp(values: z.infer<typeof signUpSchema>) {
-
     let username = values.email, password = values.password
     let rawData = await fetch(process.env.BACKEND_URL! + "auth/sign-up", {
         method: "POST",

@@ -1,6 +1,16 @@
 import Header from '@/components/Header';
 import TransactionForm from '@/components/TransactionForm';
+import TransactionList from '@/components/TransactionList';
 import { FiMeh } from 'react-icons/fi';
+
+interface Transaction {
+    id: string;
+    date: Date; // Changed from string to Date
+    category: string;
+    amount: number;
+    type: 'income' | 'expense';
+    notes?: string | null;
+}
 
 export default function TransactionsPage() {
     const summaryData = [
@@ -10,7 +20,14 @@ export default function TransactionsPage() {
         { title: 'Tổng chi phí', value: '0.00 VND' },
     ];
 
-    const hasTransactions = false;
+    const transactionsData: Transaction[] = [
+        { id: 't1', date: new Date(2025, 2, 25), category: 'Trợ cấp', amount: 100000, type: 'income', notes: 'Từ bố mẹ' }, // Month is 0-indexed (2 = March)
+        { id: 't2', date: new Date(2025, 2, 23), category: 'Ăn uống', amount: 30000, type: 'expense', notes: null },
+        { id: 't3', date: new Date(2025, 2, 23), category: 'Di chuyển', amount: 15000, type: 'expense', notes: 'Xe buýt' },
+        { id: 't4', date: new Date(2025, 2, 22), category: 'Lương', amount: 5000000, type: 'income', notes: 'Tháng 3' },
+    ];
+
+    const hasTransactions = transactionsData.length !== 0;
 
     return (
         <div className="min-h-full">
@@ -34,7 +51,7 @@ export default function TransactionsPage() {
                     {hasTransactions ? (
                         <div>
                             <p className="text-center text-gray-700">Transaction list would go here...</p>
-                            {/* Example: <TransactionTable data={...} /> */}
+                            <TransactionList transactions={transactionsData} />
                         </div>
                     ) : (
                         <div className="mt-12 flex flex-col items-center justify-center text-center">
