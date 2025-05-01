@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 // Import Link if you want to add a "Back to Login" link
 import Link from 'next/link'; // Keep Link if needed for a back button
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+
 
 export default function ForgotPasswordPage() {
     // State to manage the current step ('email', 'otp', 'reset', 'success')
@@ -20,7 +23,7 @@ export default function ForgotPasswordPage() {
 
     // --- Handlers for each step ---
 
-    const handleEmailSubmit = async (e) => {
+    const handleEmailSubmit = async (e: any) => {
         e.preventDefault();
         setError(''); // Clear previous errors
         if (!email) {
@@ -31,18 +34,41 @@ export default function ForgotPasswordPage() {
         // --- TODO: API Call to request OTP ---
         // Example simulation:
         console.log('Requesting OTP for:', email);
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-        // Assuming API call is successful:
-        setIsLoading(false);
-        setStep('otp'); // Move to OTP step
-        // --- Handle API errors here ---
-        // if (apiError) {
-        //   setError('Không thể gửi OTP. Vui lòng thử lại.');
-        //   setIsLoading(false);
-        // }
+
+
+        let callResult : any = false;
+        
+        await new Promise((resolve, reject) => {
+            fetch('https://golfin-server.onrender.com/auth/password-recovery', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send OTP. Please try again.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('OTP request successful:', data);
+                    resolve(data);
+                    setIsLoading(false);
+                    setStep('otp'); 
+                })
+                .catch((error) => {
+                    console.error('Error requesting OTP:', error);
+                    setError('Không thể gửi OTP. Vui lòng thử lại.');
+                    setIsLoading(false);
+                    reject(error);
+                });
+        });
     };
 
-    const handleOtpSubmit = async (e) => {
+    const handleOtpSubmit = async (e: any) => {
+
         e.preventDefault();
         setError('');
         if (!otp || otp.length < 6) { // Example validation
@@ -52,21 +78,76 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
         // --- TODO: API Call to verify OTP ---
         // Example simulation:
-        console.log('Verifying OTP:', otp, 'for email:', email);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        // Assuming OTP is correct:
-        setIsLoading(false);
-        setStep('reset'); // Move to reset password step
-        // --- Handle API errors (invalid OTP, expired etc.) ---
-        // if (apiError) {
-        //   setError('Mã OTP không hợp lệ hoặc đã hết hạn.');
-        //   setIsLoading(false);
-        // }
+
+        await new Promise((resolve, reject) => {
+            fetch('https://golfin-server.onrender.com/auth/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, otp }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to request OTP. Please try again.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('OTP is OK:', data);
+                    resolve(data);
+                    setIsLoading(false);
+                    setStep('reset'); // Move to reset password step
+                })
+                .catch((error) => {
+                    console.error('Error requesting OTP:', error);
+                    setError('Mã OTP không hợp lệ hoặc đã hết hạn.');
+                    setIsLoading(false);
+                    reject(error);
+                });
+        });
     };
 
-    const handlePasswordResetSubmit = async (e) => {
+    const handlePasswordResetSubmit = async (e: any) => {
         e.preventDefault();
         setError('');
+
+        // --- Validate new password and confirm password ---
+        // password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number
+        if (!newPassword || !confirmPassword) {
+            setError('Vui lòng nhập đầy đủ mật khẩu mới.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError('Mật khẩu xác nhận không khớp.');
+            return;
+        }
+        
+        if (newPassword.length < 8) { // Example validation
+            setError('Mật khẩu phải có ít nhất 8 ký tự.');
+            return;
+        }
+
+        if (!/[A-Z]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ cái viết hoa.');
+            return;
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ cái viết thường.');
+            return;
+        }
+        
+        if (!/[0-9]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một chữ số.');
+            return;
+        }
+
+        if (!/[!@#$%^&*]/.test(newPassword)) {
+            setError('Mật khẩu phải có ít nhất một ký tự đặc biệt.');
+            return;
+        }
+
         if (!newPassword || !confirmPassword) {
             setError('Vui lòng nhập đầy đủ mật khẩu mới.');
             return;
@@ -81,19 +162,45 @@ export default function ForgotPasswordPage() {
         }
 
         setIsLoading(true);
-        // --- TODO: API Call to reset password ---
-        // Send email, otp (or a token received after OTP verification), and newPassword
-        console.log('Resetting password for:', email);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        // Assuming password reset is successful:
-        setIsLoading(false);
-        setStep('success'); // Move to success state
+
+        await new Promise((resolve, reject) => {
+            fetch('https://golfin-server.onrender.com/auth/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, otp, newPassword, confirmPassword }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to reset password. Please try again.');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log('Password reset successful:', data);
+                    resolve(data);
+                    setIsLoading(false);
+                    setStep('success'); // Move to success state
+
+                })
+                .catch((error) => {
+                    console.error('Error resetting password:', error);
+                    setError('Không thể đặt lại mật khẩu. Vui lòng thử lại.');
+                    setIsLoading(false);
+                    reject(error);
+                });
+        });
+
+        // setIsLoading(false);
+        // setStep('success'); // Move to success state
         // --- Handle API errors ---
         // if (apiError) {
         //   setError('Không thể đặt lại mật khẩu. Vui lòng thử lại.');
         //   setIsLoading(false);
         // }
     };
+
 
     // --- Render different form sections based on the step ---
 
